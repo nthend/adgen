@@ -4,6 +4,8 @@ import os
 import mimetypes
 import traceback
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from socketserver import ThreadingMixIn
+
 
 class RequestHandler(BaseHTTPRequestHandler):
 
@@ -41,13 +43,20 @@ class RequestHandler(BaseHTTPRequestHandler):
 			res = (500, "text/plain", b"500 Internal Server Error")
 
 		self.send_response(res[0])
-		self.send_header('Content-type', res[1])
+		self.send_header("Content-type", res[1])
+		self.send_header("Content-Length", len(res[2]))
 		self.end_headers()
 
 		self.wfile.write(res[2])
 
+		self.wfile.flush()
 
-server_address = ('0.0.0.0', 8081)
-httpd = HTTPServer(server_address, RequestHandler)
-print('[ ok ] server started')
+
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+	pass
+
+httpd = ThreadedHTTPServer(("0.0.0.0", 8081), RequestHandler)
+httpd.protocol_version = "HTTP/1.1"
+print("[ ok ] server started")
 httpd.serve_forever()
+ 

@@ -1,0 +1,66 @@
+html {
+	font-family: Helvetica, sans-serif
+}
+
+.shadow {
+	box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#canvas {
+
+}
+
+.tab {
+	display: table;
+}
+
+.tr {
+	display: table-row;
+}
+
+.tc {
+	display: table-cell;
+}
+
+.tph {
+	width: 8px;
+}
+
+#imgbox {
+	width: 600px;
+}
+
+#imgtab .tc {
+	padding: 2px;
+	text-align: center;
+}
+
+#imgtab input {
+	width: 64px;
+}
+
+.box {
+	border: 1px solid #EE8822;
+}
+
+.bt {
+	background-color: #EE8822;
+	padding: 4px;
+}
+
+.bc {
+	background-color: #FFFFFF;
+	padding: 4px;
+}
+
+.vn {
+	padding: 2px;
+}
+
+.vi {
+
+}
+
+.invalid {
+	background-color: #FF0000;
+}
