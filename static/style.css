@@ -10,6 +10,10 @@ html {
 
 }
 
+#boxhtml {
+	display: none;
+}
+
 .tab {
 	display: table;
 }
@@ -41,6 +45,7 @@ html {
 
 .box {
 	border: 1px solid #EE8822;
+	margin-bottom: 8px;
 }
 
 .bt {
