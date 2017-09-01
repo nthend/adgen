@@ -9,45 +9,54 @@
 </head>
 
 <body>
-	<div id=boxhtml>
-		<div class="box shadow">
-			<div class="bt itext">Area</div>
-			<div class=bc>
-				<div class="itab tab">
-					<div class=tr>
-						<div class=tc></div>
-						<div class=tc></div>
-						<div class="tc tph"></div>
-						<div class="tc vn">top:</div>
-						<div class="tc vi"><input type=text class=itop /></div>
-						<div class="tc tph"></div>
-						<div class=tc></div>
-						<div class=tc></div>
-					</div>
-					<div class=tr>
-						<div class="tc vn">left:</div>
-						<div class="tc vi"><input type=text class=ileft /></div>
-						<div class="tc tph"></div>
-						<div class=tc></div>
-						<div class=tc></div>
-						<div class="tc tph"></div>
-						<div class="tc vn">right:</div>
-						<div class="tc vi"><input type=text class=iright /></div>
-					</div>
-					<div class=tr>
-						<div class=tc></div>
-						<div class=tc></div>
-						<div class="tc tph"></div>
-						<div class="tc vn">bottom:</div>
-						<div class="tc vi"><input type=text class=ibottom /></div>
-						<div class="tc tph"></div>
-						<div class=tc></div>
-						<div class=tc></div>
-					</div>
+	<div id=hiddenhtml>
+		<div class="_area box shadow">
+			<div class=bt>
+				<div class="_text box_header">Area</div>
+				<div class="box_ctrl_group">
+					<img class="box_ctrl _up" src="img/up.png" />
+					<img class="box_ctrl _down" src="img/down.png" />
+					<img class="box_ctrl _del" src="img/del.png" />
 				</div>
+			</div>
+			<div class="_content bc"></div>
+		</div>
+		<div class="_area_pos tab">
+			<div class=tr>
+				<div class=tc></div>
+				<div class=tc></div>
+				<div class="tc tph"></div>
+				<div class="tc vn">top:</div>
+				<div class="tc vi"><input type=text class=_top /></div>
+				<div class="tc tph"></div>
+				<div class=tc></div>
+				<div class=tc></div>
+			</div>
+			<div class=tr>
+				<div class="tc vn">left:</div>
+				<div class="tc vi"><input type=text class=_left /></div>
+				<div class="tc tph"></div>
+				<div class=tc></div>
+				<div class=tc></div>
+				<div class="tc tph"></div>
+				<div class="tc vn">right:</div>
+				<div class="tc vi"><input type=text class=_right /></div>
+			</div>
+			<div class=tr>
+				<div class=tc></div>
+				<div class=tc></div>
+				<div class="tc tph"></div>
+				<div class="tc vn">bottom:</div>
+				<div class="tc vi"><input type=text class=_bottom /></div>
+				<div class="tc tph"></div>
+				<div class=tc></div>
+				<div class=tc></div>
 			</div>
 		</div>
 	</div>
+
 	<canvas id=canvas width=600 height=600>HTML5 canvas isn"t supported</canvas>
+	<div><input id=add_image type=button value="Add image" /><input id=add_text type=button value="Add text" /></div>
+	<div id="area_list"></div>
 </body>
 </html>

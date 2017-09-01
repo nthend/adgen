@@ -1,18 +1,26 @@
-function Area(text, pos) {
+function template(cn) {
+	return t.elem("hiddenhtml").querySelector("#hiddenhtml > ." + cn).cloneNode(true)
+}
+
+function findelem(node, cn) {
+	return node.getElementsByClassName(cn)[0];
+}
+
+function Area(text, pos, fill) {
 	var self = this;
 
-	self.pos = pos;
-
 	self.text = text;
+	self.pos = pos;
+	self.fill = fill;
 
-	self.box = t.elem("boxhtml").firstElementChild.cloneNode(true);
+	self.box = template("_area");
+	findelem(self.box, "_text").innerText = text;
 
-	self.box.getElementsByClassName("itext")[0].innerHTML = text;
-	self.inputs = t.map(["ileft", "itop", "iright", "ibottom"], function (i, cn) {
-		return self.box.getElementsByClassName(cn)[0];
+	var pos = template("_area_pos");
+	self.inputs = t.map(["_left", "_top", "_right", "_bottom"], function (i, cn) {
+		return findelem(pos, cn);
 	});
-
-	document.body.appendChild(self.box);
+	findelem(self.box, "_content").appendChild(pos);
 }
 
 function Canvas(elem) {
@@ -26,8 +34,54 @@ function Canvas(elem) {
 
 	self.addArea = function (area) {
 		self.areas.push(area);
+
+		findelem(area.box, "_up").onclick = function () {
+			for (var k = 0; k < self.areas.length; ++k) {
+				var a = self.areas[k];
+				if (a == area && k > 0) {
+					self.areas[k] = self.areas[k-1];
+					self.areas[k-1] = a;
+					break;
+				}
+			}
+			self.buildlist();
+			self.draw();
+		};
+		findelem(area.box, "_down").onclick = function () {
+			for (var k = 0; k < self.areas.length; ++k) {
+				var a = self.areas[k];
+				if (a == area && k + 1 < self.areas.length) {
+					self.areas[k] = self.areas[k+1];
+					self.areas[k+1] = a;
+					break;
+				}
+			}
+			self.buildlist();
+			self.draw();
+		};
+		findelem(area.box, "_del").onclick = function () {
+			for (var k = 0; k < self.areas.length; ++k) {
+				var a = self.areas[k];
+				if (a == area) {
+					self.areas.splice(k, 1);
+					break;
+				}
+			}
+			self.buildlist();
+			self.draw();
+		};
+
+		self.buildlist();
 		self.syncimg();
 	}
+
+	self.buildlist = function () {
+		t.elem("area_list").innerHTML = "";
+		for (var k = 0; k < self.areas.length; ++k) {
+			var area = self.areas[k];
+			t.elem("area_list").appendChild(area.box);
+		}
+	};
 
 	self.focus = {
 		target: null,
@@ -151,23 +205,33 @@ function Canvas(elem) {
 		var w = self.elem.width, h = self.elem.height;
 		ctx.clearRect(0, 0, w, h);
 		
-		ctx.fillStyle = "#AAAAAA";
+		ctx.fillStyle = "rgb(127,127,127)";
 		ctx.fillRect(0, 0, w, h);
 		
 		for (var k = 0; k < self.areas.length; ++k) {
 			var area = self.areas[k];
 			var ia = area.pos;
+			var rectcol, textcol;
 			if (self.focus.target == area && self.focus.part == 5) {
-				ctx.fillStyle = "#EEEEEE";
+				rectcol = "rgba(255,255,255,0.8)";
+				textcol = "rgba(0,0,0,0.8)";
 			} else {
-				ctx.fillStyle = "#DDDDDD";
+				rectcol = "rgba(255,255,255,0.4)";
+				textcol = "rgba(0,0,0,0.4)";
 			}
-			ctx.fillRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+
+			if (area.fill) {
+				ctx.fillStyle = rectcol;
+				ctx.fillRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+			} else {
+				ctx.strokeStyle = rectcol;
+				ctx.strokeRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+			}
 
 			var text = area.text;
 			ctx.textBaseline = "middle";
 			ctx.font = t.min((ia[2] - ia[0])/5, (ia[3] - ia[1])/2) + "px Arial";
-			ctx.fillStyle = "#AAAAAA";
+			ctx.fillStyle = textcol;
 			var tx = (ia[0] + ia[2])/2 - ctx.measureText(text).width/2;
 			var ty = (ia[1] + ia[3])/2;
 			ctx.fillText(text, tx, ty);
@@ -242,6 +306,10 @@ var canvas = null;
 
 window.addEventListener("load", function () {
 	canvas = new Canvas(t.elem("canvas"));
-	canvas.addArea(new Area("Image", [150, 100, 450, 400]));
-	canvas.addArea(new Area("Text", [100, 450, 500, 550]));
+	t.elem("add_image").onclick = function () {
+		canvas.addArea(new Area("Image", [150, 100, 450, 400], true));
+	};
+	t.elem("add_text").onclick = function () {
+		canvas.addArea(new Area("Text", [100, 250, 500, 350], false));
+	};
 });

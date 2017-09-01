@@ -10,7 +10,7 @@ html {
 
 }
 
-#boxhtml {
+#hiddenhtml {
 	display: none;
 }
 
@@ -30,27 +30,23 @@ html {
 	width: 8px;
 }
 
-#imgbox {
-	width: 600px;
-}
-
-#imgtab .tc {
+.tab .tc {
 	padding: 2px;
 	text-align: center;
 }
 
-#imgtab input {
-	width: 64px;
+.tab input {
+	width: 32px;
 }
 
 .box {
+	width: 600px;
 	border: 1px solid #EE8822;
-	margin-bottom: 8px;
+	margin: 8px;
 }
 
 .bt {
 	background-color: #EE8822;
-	padding: 4px;
 }
 
 .bc {
@@ -68,4 +64,26 @@ html {
 
 .invalid {
 	background-color: #FF0000;
+}
+
+.box_header {
+	margin: 4px;
+	display: inline-block;
+}
+
+.box_ctrl_group {
+	white-space: initial;
+	display: inline-block;
+	float: right;
+	cursor: pointer;
+}
+
+.box_ctrl {
+	background-color: #EE8822;
+	mix-blend-mode: multiply;
+}
+
+.box_ctrl_overlay {
+	background-color: #EE8822;
+	mix-blend-mode: multiply;
 }
