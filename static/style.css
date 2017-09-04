@@ -7,7 +7,7 @@ html {
 }
 
 #canvas {
-
+	border: 2px solid #000000;
 }
 
 #hiddenhtml {
@@ -36,17 +36,17 @@ html {
 }
 
 .tab input {
-	width: 32px;
+	width: 64px;
 }
 
 .box {
 	width: 600px;
-	border: 1px solid #EE8822;
+	border: 1px solid #7777AA;
 	margin: 8px;
 }
 
 .bt {
-	background-color: #EE8822;
+	background-color: #7777AA;
 }
 
 .bc {
@@ -79,11 +79,5 @@ html {
 }
 
 .box_ctrl {
-	background-color: #EE8822;
-	mix-blend-mode: multiply;
-}
-
-.box_ctrl_overlay {
-	background-color: #EE8822;
 	mix-blend-mode: multiply;
 }

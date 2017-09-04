@@ -5,6 +5,8 @@
 	<title>AdGen</title>
 	<link rel="stylesheet" href="style.css"/>
 	<script type="text/javascript" src="tools.js"></script>
+	<script type="text/javascript" src="area.js"></script>
+	<script type="text/javascript" src="canvas.js"></script>
 	<script type="text/javascript" src="main.js"></script>
 </head>
 
@@ -27,36 +29,90 @@
 				<div class=tc></div>
 				<div class="tc tph"></div>
 				<div class="tc vn">top:</div>
-				<div class="tc vi"><input type=text class=_top /></div>
+				<div class="tc vi"><input type=number class=_top min=0 /></div>
 				<div class="tc tph"></div>
 				<div class=tc></div>
 				<div class=tc></div>
 			</div>
 			<div class=tr>
 				<div class="tc vn">left:</div>
-				<div class="tc vi"><input type=text class=_left /></div>
+				<div class="tc vi"><input type=number class=_left min=0 /></div>
 				<div class="tc tph"></div>
 				<div class=tc></div>
 				<div class=tc></div>
 				<div class="tc tph"></div>
 				<div class="tc vn">right:</div>
-				<div class="tc vi"><input type=text class=_right /></div>
+				<div class="tc vi"><input type=number class=_right min=0 /></div>
 			</div>
 			<div class=tr>
 				<div class=tc></div>
 				<div class=tc></div>
 				<div class="tc tph"></div>
 				<div class="tc vn">bottom:</div>
-				<div class="tc vi"><input type=text class=_bottom /></div>
+				<div class="tc vi"><input type=number class=_bottom min=0 /></div>
 				<div class="tc tph"></div>
 				<div class=tc></div>
 				<div class=tc></div>
 			</div>
 		</div>
+		<div class="_text_opts tab">
+			<div class=tr>
+				<div class=tc>Font:</div>
+				<div class=tc>
+					<select id=new_text_font>
+						<option value="sans-serif">Sans-Serif</option>
+						<option value="serif">Serif</option>
+						<option value="monospace">Monospace</option>
+					</select>
+				</div>
+			</div>
+			<div class=tr>
+				<div class=tc>Size:</div>
+				<div class=tc><input type=text id=new_text_size value="48" /> px</div>
+			</div>
+		</div>
 	</div>
 
-	<canvas id=canvas width=600 height=600>HTML5 canvas isn"t supported</canvas>
-	<div><input id=add_image type=button value="Add image" /><input id=add_text type=button value="Add text" /></div>
+	<div>
+		<div>
+			<div>
+				Size:
+				width: <input type=number id=canvas_width value="600" min=10 max=10000/> px,
+				height: <input type=number id=canvas_height value="600" min=10 max=10000/> px
+			</div>
+			<div>
+				Scale:
+				<select id=canvas_scale>
+					<option value="1">1 x</option>
+					<option value="2">1/2 x</option>
+					<option value="4">1/4 x</option>
+				</select>
+			</div>
+			<div>
+				Background color:
+				<input type=color id=canvas_color />
+			</div>
+			<canvas id=canvas width=600 height=600>HTML5 canvas isn"t supported</canvas>
+		</div>
+		<div>
+			<div>New element:</div>
+			Type:
+			<select id=new_type>
+				<option value="image">Image</option>
+				<option value="text">Text</option>
+			</select>
+			<div id="new_image">
+			</div>
+			<div id="new_text">
+				Text type:
+				<select id=new_text_font>
+					<option value="plain">Plain</option>
+					<option value="price">Price range</option>
+				</select>
+			</div>
+			<input id=new_add type=button value="+ Add" />
+		</div>
+	</div>
 	<div id="area_list"></div>
 </body>
 </html>
