@@ -1,10 +1,17 @@
-function Canvas(elem, size) {
+function Canvas(elem, size, color) {
 	var self = this;
 	self.elem = elem;
 	self.context = elem.getContext("2d");
 	self.areas = [];
 
 	self.cs = settings.control_size;
+
+	self.color = color;
+	t.elem("canvas_color").value = color;
+	t.elem("canvas_color").addEventListener("change", function () {
+		self.color = t.elem("canvas_color").value;
+		self.draw();
+	});
 
 	self.size = [0, 0];
 	self.resize = function (w, h) {
@@ -81,6 +88,41 @@ function Canvas(elem, size) {
 			var area = self.areas[k];
 			t.elem("area_list").appendChild(area.box);
 		}
+	};
+
+	self.import = function (config) {
+
+	};
+
+	self.export = function () {
+		return {
+			canvas: {
+				dimensions: [self.size[0], self.size[1]],
+				background: t.rgb(self.color),
+			},
+			areas: t.map(self.areas, function (i, area) {
+				if (area.type == "image") {
+					return {
+						position: area.pos,
+						type: "image",
+						imagetype: "random",
+						location: "./srcimgs"
+					}
+				} else if (area.type == "text") {
+					return {
+						position: area.pos,
+						type: "text",
+						texttype: "fixed",
+						font: "arialnb.ttf",
+						color: t.rgb(self.color),
+						size: self.size,
+						value: self.value,
+					}
+				} else {
+					return {}
+				}
+			})
+		};
 	};
 
 	self.focus = {
@@ -162,7 +204,7 @@ function Canvas(elem, size) {
 		var w = self.elem.width, h = self.elem.height;
 		ctx.clearRect(0, 0, w, h);
 		
-		ctx.fillStyle = "rgb(127,127,127)";
+		ctx.fillStyle = self.color;
 		ctx.fillRect(0, 0, w, h);
 		
 		for (var k = 0; k < self.areas.length; ++k) {

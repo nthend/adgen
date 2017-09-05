@@ -6,11 +6,17 @@ import traceback
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
+import generator
+
 
 class RequestHandler(BaseHTTPRequestHandler):
 
 	def dynamic(self):
-		pass
+		if self.path.strip("/") == "generate":
+			size = int(self.headers["Content-Length"])
+			print(self.rfile.read(size).decode("utf-8"))
+			return (200, "text/plain", b"200 OK")
+		return None
 
 	def static(self):
 		path = "static/" + self.path
@@ -30,7 +36,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 			
 		return (404, "text/plain", b"404 Not Found")
 
-	def do_GET(self):
+	def process(self):
 		res = None
 
 		try:
@@ -50,6 +56,12 @@ class RequestHandler(BaseHTTPRequestHandler):
 		self.wfile.write(res[2])
 
 		self.wfile.flush()
+
+	def do_POST(self):
+		self.process();
+
+	def do_GET(self):
+		self.process();
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):

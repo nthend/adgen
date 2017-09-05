@@ -4,7 +4,7 @@ t.elem = function (id) {
 	return document.getElementById(id);
 }
 
-t.ajax = function ajax(path, ok, err) {
+t.ajax = function ajax(path, data, ok, err) {
 	let req = new XMLHttpRequest();
 	if (!req) {
 		err(null);
@@ -19,15 +19,21 @@ t.ajax = function ajax(path, ok, err) {
 			}
 		}
 	};
-	req.open("GET", path, true);
-	req.send();
+	if (data) {
+		req.open("POST", path, true);
+		req.setRequestHeader("Content-type", "text/plain");
+		req.send(data); 
+	} else {
+		req.open("GET", path, true);
+		req.send();
+	}
 	return req;
 }
 
 t.mousepos = function (e, t) {
 	var pos = [0, 0];
 	pos[0] = e.pageX - t.offsetLeft;
-    pos[1] = e.pageY - t.offsetTop;
+	pos[1] = e.pageY - t.offsetTop;
 	return pos;
 }
 
@@ -49,4 +55,9 @@ t.map = function (arr, func) {
 		out.push(func(i, arr[i]));
 	}
 	return out;
+}
+
+t.rgb = function (hex) {
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null;
 }

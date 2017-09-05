@@ -1,5 +1,6 @@
 function Area(text, pos, fill) {
 	var self = this;
+	self.type = "area";
 
 	self.text = text;
 	self.pos = pos;
@@ -168,9 +169,15 @@ function Area(text, pos, fill) {
 function Image(text, pos) {
 	Area.call(this, text, pos, true);
 	var self = this;
+	self.type = "image";
 }
 
 function Text(text, pos) {
 	Area.call(this, text, pos, false);
 	var self = this;
+	self.type = "text";
+	self.color = "#3F3F3F";
+	self.value = "Text";
+	self.font = "arialnb.ttf";
+	self.size = 64;
 }

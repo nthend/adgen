@@ -13,7 +13,7 @@ function findelem(node, cn) {
 var canvas = null;
 
 window.addEventListener("load", function () {
-	canvas = new Canvas(t.elem("canvas"), [600, 600]);
+	canvas = new Canvas(t.elem("canvas"), [600, 600], "#7F7F7F");
 
 	t.elem("new_add").onclick = function () {
 		var sel = t.elem("new_type");
@@ -39,4 +39,17 @@ window.addEventListener("load", function () {
 	};
 	sel.onchange = sel_update;
 	sel_update();
+
+	t.elem("export").onclick = function () {
+		console.log(JSON.stringify(canvas.export()));
+	};
+	t.elem("generate").onclick = function () {
+		var count = parseInt(t.elem("gen_number").value);
+		if (!isNaN(count)) {
+			t.ajax("/generate", JSON.stringify({
+				count: count,
+				config: canvas.export()
+			}));
+		}
+	}
 });
