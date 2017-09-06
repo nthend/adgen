@@ -3,10 +3,11 @@
 import os
 import mimetypes
 import traceback
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
-import generator
+from generator import generate_multiple
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -14,7 +15,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 	def dynamic(self):
 		if self.path.strip("/") == "generate":
 			size = int(self.headers["Content-Length"])
-			print(self.rfile.read(size).decode("utf-8"))
+			data = json.loads(self.rfile.read(size).decode("utf-8"))
+			print(data)
+			generate_multiple(data["config"], data["count"], "output/out%02d.jpg")
 			return (200, "text/plain", b"200 OK")
 		return None
 

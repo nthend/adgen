@@ -15,7 +15,6 @@ function Canvas(elem, size, color) {
 
 	self.size = [0, 0];
 	self.resize = function (w, h) {
-		console.log(w, h);
 		self.size = [w, h];
 		self.elem.width = w;
 		self.elem.height = h;
@@ -106,17 +105,17 @@ function Canvas(elem, size, color) {
 						position: area.pos,
 						type: "image",
 						imagetype: "random",
-						location: "./srcimgs"
+						location: "./input"
 					}
 				} else if (area.type == "text") {
 					return {
 						position: area.pos,
 						type: "text",
 						texttype: "fixed",
-						font: "arialnb.ttf",
-						color: t.rgb(self.color),
-						size: self.size,
-						value: self.value,
+						font: area.font,
+						color: t.rgb(area.color),
+						size: area.fontsize,
+						value: area.value,
 					}
 				} else {
 					return {}

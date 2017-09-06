@@ -14,6 +14,24 @@ html {
 	display: none;
 }
 
+#maintable {
+
+}
+
+#area_list {
+	width: 520px;
+	overflow-y: auto;
+	border: 1px solid #7777AA;
+}
+
+#new_elem_box {
+	height: 120px;
+}
+
+.right_list {
+	width: 480px;
+}
+
 .tab {
 	display: table;
 }
@@ -30,22 +48,22 @@ html {
 	width: 8px;
 }
 
-.tab .tc {
+.area_pos .tc {
 	padding: 2px;
 	text-align: center;
 }
 
-.tab input {
+.area_pos input {
 	width: 64px;
 }
 
 .box {
-	width: 600px;
 	border: 1px solid #7777AA;
 	margin: 8px;
 }
 
 .bt {
+	padding: 4px;
 	background-color: #7777AA;
 }
 
@@ -66,18 +84,23 @@ html {
 	background-color: #FF0000;
 }
 
-.box_header {
+.bt.area_title {
+	padding: 0;
+}
+
+.area_header {
 	margin: 4px;
 	display: inline-block;
 }
 
-.box_ctrl_group {
+.area_ctrl_group {
 	white-space: initial;
 	display: inline-block;
 	float: right;
 	cursor: pointer;
 }
 
-.box_ctrl {
+.area_ctrl {
+	background-color: #7777AA;
 	mix-blend-mode: multiply;
 }

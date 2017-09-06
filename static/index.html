@@ -12,18 +12,18 @@
 
 <body>
 	<div id=hiddenhtml>
-		<div class="_area box shadow">
-			<div class=bt>
-				<div class="_text box_header">Area</div>
-				<div class="box_ctrl_group">
-					<img class="box_ctrl _up" src="img/up.png" />
-					<img class="box_ctrl _down" src="img/down.png" />
-					<img class="box_ctrl _del" src="img/del.png" />
+		<div class="_area box shadow right_list">
+			<div class="bt area_title">
+				<div class="_text area_header">Area</div>
+				<div class="area_ctrl_group">
+					<img class="area_ctrl _up" src="img/up.png" />
+					<img class="area_ctrl _down" src="img/down.png" />
+					<img class="area_ctrl _del" src="img/del.png" />
 				</div>
 			</div>
 			<div class="_content bc"></div>
 		</div>
-		<div class="_area_pos tab">
+		<div class="_area_pos area_pos tab">
 			<div class=tr>
 				<div class=tc></div>
 				<div class=tc></div>
@@ -59,71 +59,94 @@
 			<div class=tr>
 				<div class=tc>Font:</div>
 				<div class=tc>
-					<select id=new_text_font>
-						<option value="sans-serif">Sans-Serif</option>
-						<option value="serif">Serif</option>
-						<option value="monospace">Monospace</option>
+					<select class=_text_font>
+						<option value="arial">Arial</option>
+						<option value="calibri">Calibri</option>
+						<option value="times_new_roman">Times New Roman</option>
+						<option value="courier_new">Courier New</option>
 					</select>
 				</div>
 			</div>
 			<div class=tr>
 				<div class=tc>Size:</div>
-				<div class=tc><input type=text id=new_text_size value="48" /> px</div>
+				<div class=tc><input type=number class=_text_size value=48 min=1 max=1000 /> px</div>
+			</div>
+			<div class=tr>
+				<div class=tc>Color:</div>
+				<div class=tc><input type=color class=_text_color value=#000000 /> px</div>
+			</div>
+			<div class=tr>
+				<div class=tc>Value:</div>
+				<div class=tc><input type=text class=_text_value value="Enter text here" /> px</div>
 			</div>
 		</div>
 	</div>
 
-	<div>
-		<div>
-			<div>
-				<input type=button id=import value="Import template" />
-				<input type=button id=export value="Export template" />
+	<div id=maintable class=tab>
+		<div class=tr>
+			<div class=tc>
+				<div class="box shadow">
+					<div class=bt>Template</div>
+					<div class=bc>
+						<div>
+							<input type=button id=import value="Import template" />
+							<input type=button id=export value="Export template" />
+						</div>
+						<div>
+							Images count: 
+							<input type=number id=gen_number value=10 min=1 max=10000/>
+							<input type=button id=generate value="Generate images" />
+						</div>
+					</div>
+				</div>
+				<div class="box shadow">
+					<div class=bt>Canvas</div>
+					<div class=bc>
+						<div>
+							Size:
+							width: <input type=number id=canvas_width value="600" min=10 max=10000/> px,
+							height: <input type=number id=canvas_height value="600" min=10 max=10000/> px
+						</div>
+						<div>
+							Scale:
+							<select id=canvas_scale>
+								<option value="1">1 x</option>
+								<option value="2">1/2 x</option>
+								<option value="4">1/4 x</option>
+							</select>
+						</div>
+						<div>
+							Background color:
+							<input type=color id=canvas_color />
+						</div>
+						<canvas id=canvas width=600 height=600>HTML5 canvas isn"t supported</canvas>
+					</div>
+				</div>
 			</div>
-			<div>
-				Images count: 
-				<input type=number id=gen_number value=10 min=1 max=10000/>
-				<input type=button id=generate value="Generate images" />
+			<div class="tc">
+				<div id=new_elem_box class="box shadow right_list">
+					<div class=bt>New element</div>
+					<div class=bc>
+						Type:
+						<select id=new_type>
+							<option value="image">Image</option>
+							<option value="text">Text</option>
+						</select>
+						<div id="new_image">
+						</div>
+						<div id="new_text">
+							Text type:
+							<select id=new_text_font>
+								<option value="plain">Plain</option>
+								<option value="price">Price range</option>
+							</select>
+						</div>
+						<input id=new_add type=button value="+ Add" />
+					</div>
+				</div>
+				<div id="area_list" class="shadow"></div>
 			</div>
-		</div>
-		<div>
-			<div>
-				Size:
-				width: <input type=number id=canvas_width value="600" min=10 max=10000/> px,
-				height: <input type=number id=canvas_height value="600" min=10 max=10000/> px
-			</div>
-			<div>
-				Scale:
-				<select id=canvas_scale>
-					<option value="1">1 x</option>
-					<option value="2">1/2 x</option>
-					<option value="4">1/4 x</option>
-				</select>
-			</div>
-			<div>
-				Background color:
-				<input type=color id=canvas_color />
-			</div>
-			<canvas id=canvas width=600 height=600>HTML5 canvas isn"t supported</canvas>
-		</div>
-		<div>
-			<div>New element:</div>
-			Type:
-			<select id=new_type>
-				<option value="image">Image</option>
-				<option value="text">Text</option>
-			</select>
-			<div id="new_image">
-			</div>
-			<div id="new_text">
-				Text type:
-				<select id=new_text_font>
-					<option value="plain">Plain</option>
-					<option value="price">Price range</option>
-				</select>
-			</div>
-			<input id=new_add type=button value="+ Add" />
 		</div>
 	</div>
-	<div id="area_list"></div>
 </body>
 </html>

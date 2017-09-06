@@ -12,8 +12,12 @@ function findelem(node, cn) {
 
 var canvas = null;
 
-window.addEventListener("load", function () {
-	canvas = new Canvas(t.elem("canvas"), [600, 600], "#7F7F7F");
+function resize() {
+	t.elem("area_list").style.height = (window.innerHeight - t.elem("new_elem_box").offsetHeight - 60) + "px";
+}
+
+function main() {
+	canvas = new Canvas(t.elem("canvas"), [600, 600], "#FFFFFF");
 
 	t.elem("new_add").onclick = function () {
 		var sel = t.elem("new_type");
@@ -52,4 +56,9 @@ window.addEventListener("load", function () {
 			}));
 		}
 	}
-});
+
+	resize();
+}
+
+window.addEventListener("resize", resize);
+window.addEventListener("load", main);

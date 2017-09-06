@@ -51,7 +51,7 @@ def generate(config, filename):
 				print("Unknown image type: " + area["imagetype"])
 		elif area["type"] == "text":
 			if area["texttype"] == "fixed":
-				font = ImageFont.truetype("fonts/" + area["font"], area["size"])
+				font = ImageFont.truetype("fonts/" + area["font"] + ".ttf", area["size"])
 				draw = ImageDraw.Draw(img)
 				box = area["position"]
 				pos = [(box[0] + box[2])//2, (box[1] + box[3])//2]
@@ -65,56 +65,6 @@ def generate(config, filename):
 			print("Unknown area type: " + area["type"])
 	img.save(filename, "JPEG")
 
-config = {
-	"canvas": {
-		"dimensions": [600, 600],
-		"background": [255,255,255],
-	},
-	"areas": [
-		{
-			"position": [20, 80, 280, 300],
-			"type": "image",
-			"imagetype": "random",
-			"location": "./srcimgs"
-		},
-		{
-			"position": [320, 80, 580, 300],
-			"type": "image",
-			"imagetype": "random",
-			"location": "./srcimgs"
-		},
-		{
-			"position": [20, 300, 280, 520],
-			"type": "image",
-			"imagetype": "random",
-			"location": "./srcimgs"
-		},
-		{
-			"position": [320, 300, 580, 520],
-			"type": "image",
-			"imagetype": "random",
-			"location": "./srcimgs"
-		},
-		{
-			"position": [100, 0, 500, 80],
-			"type": "text",
-			"font": "arialnb.ttf",
-			"color": [0,0,0],
-			"size": 64,
-			"texttype": "fixed",
-			"value": "Top text",
-		},
-		{
-			"position": [100, 520, 500, 600],
-			"type": "text",
-			"font": "arialnb.ttf",
-			"color": [0,0,0],
-			"size": 64,
-			"texttype": "fixed",
-			"value": "Bottom text",
-		}
-	]
-}
-
-for i in range(20):
-	generate(config, "dstimgs/out%02d.jpeg" % i)
+def generate_multiple(config, count, fnfmt):
+	for i in range(count):
+		generate(config, fnfmt % (i+1))

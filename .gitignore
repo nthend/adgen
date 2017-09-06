@@ -1,6 +1,4 @@
 __pycache__
-srcimgs
-dstimgs
+input
+output
 fonts
-*.jpg
-*.jpeg

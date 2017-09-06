@@ -9,10 +9,12 @@ function Area(text, pos, fill) {
 	self.box = template("_area");
 	findelem(self.box, "_text").innerText = text;
 
-	var pos = template("_area_pos");
+	var poselem = template("_area_pos");
 	self.inputs = t.map(["_left", "_top", "_right", "_bottom"], function (i, cn) {
-		return findelem(pos, cn);
+		return findelem(poselem, cn);
 	});
+
+	findelem(self.box, "_content").appendChild(poselem);
 
 	self.move = function (m) {
 		var ia = self.pos;
@@ -71,54 +73,73 @@ function Area(text, pos, fill) {
 			ia[2*(i&1)] = p[0];
 			ia[2*(i>>1)+1] = p[1];
 		}
+		self.resize();
 	};
 
-	self.draw = function(ctx, focus) {
-		var ia = self.pos;
-			var rectcol, textcol;
-			if (focus.target == self && focus.part == 5) {
-				rectcol = "rgba(191,191,191,0.8)";
-				textcol = "rgba(63,63,63,0.8)";
-			} else {
-				rectcol = "rgba(191,191,191,0.4)";
-				textcol = "rgba(63,63,63,0.4)";
-			}
-
-			if (self.fill) {
-				ctx.fillStyle = rectcol;
-				ctx.fillRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
-			} else {
-				ctx.strokeStyle = rectcol;
-				ctx.strokeRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
-			}
-
-			var text = self.text;
-			ctx.textBaseline = "middle";
-			ctx.font = t.min((ia[2] - ia[0])/5, (ia[3] - ia[1])/2) + "px Arial";
-			ctx.fillStyle = textcol;
-			var tx = (ia[0] + ia[2])/2 - ctx.measureText(text).width/2;
-			var ty = (ia[1] + ia[3])/2;
-			ctx.fillText(text, tx, ty);
-
-			var cs = settings.control_size;
-			for (var i = 0; i < 4; ++i) {
-				var c = [ia[2*(i&1)], ia[2*(i>>1)+1]];
-				if (focus.target == self && focus.part == i) {
-					ctx.fillStyle = "rgba(191,191,191,0.8)";
-				} else {
-					ctx.fillStyle = "rgba(191,191,191,0.4)";
-				}
-				ctx.fillRect(c[0] - cs, c[1] - cs, 2*cs, 2*cs);
-			}
+	self.resize = function () {};
+	self.redraw = function () {
+		self.outer.draw();
 	};
 
 	self.clamp = function(width, height) {
 		var p = self.pos;
-		p[0] = t.clamp(p[0], 0, width-1);
-		p[1] = t.clamp(p[1], 0, height-1);
-		p[2] = t.clamp(p[2], 0, width);
-		p[3] = t.clamp(p[3], 0, height);
-	}
+		var r = false;
+		if (width >= p[2] - p[0]) {
+			if (p[0] < 0) {
+				p[0] = 0;
+				p[2] -= p[0];
+			}
+			if (p[2] > width) {
+				p[0] -= p[2] - width;
+				p[2] = width;
+			}
+		} else {
+			p[0] = 0;
+			p[2] = width;
+			r = true;
+		}
+		if (height >= p[3] - p[1]) {
+			if (p[1] < 0) {
+				p[1] = 0;
+				p[3] -= p[1];
+			}
+			if (p[3] > height) {
+				p[1] -= p[3] - height;
+				p[3] = height;
+			}
+		} else {
+			p[1] = 0;
+			p[3] = height;
+			r = true;
+		}
+		self.synccnv();
+		if (r) {
+			self.resize();
+		}
+	};
+
+	self.drawCtrls = function(ctx, focus) {
+		var ia = self.pos;
+
+		var fillcolor = "191,191,191";
+		var strokecolor = "63,63,63";
+
+		var focusalpha = "0.8";
+		var bluralpha = "0.6";
+
+		var cs = settings.control_size;
+		for (var i = 0; i < 4; ++i) {
+			var c = [ia[2*(i&1)], ia[2*(i>>1)+1]];
+			var alpha = bluralpha;
+			if (focus.target == self && focus.part == i) {
+				alpha = focusalpha;
+			}
+			ctx.fillStyle = "rgba(" + fillcolor + "," + alpha + ")";
+			ctx.strokeStyle = "rgba(" + strokecolor + "," + alpha + ")";
+			ctx.fillRect(c[0] - cs, c[1] - cs, 2*cs, 2*cs);
+			ctx.strokeRect(c[0] - cs, c[1] - cs, 2*cs, 2*cs);
+		}
+	};
 
 	t.map(self.inputs, function (i, e) {
 		e.addEventListener("change", function () {
@@ -144,7 +165,7 @@ function Area(text, pos, fill) {
 				} else {
 					e.classList.remove("invalid");
 					self.syncctrl();
-					self.outer.draw();
+					self.redraw();
 				}
 			}
 		});
@@ -162,22 +183,134 @@ function Area(text, pos, fill) {
 			self.pos[i] = parseInt(e.value);
 		});
 	}
-
-	findelem(self.box, "_content").appendChild(pos);
 }
 
 function Image(text, pos) {
 	Area.call(this, text, pos, true);
 	var self = this;
 	self.type = "image";
+
+	self.draw = function(ctx, focus) {
+		var ia = self.pos;
+
+		var fillcolor = "191,191,191";
+		var strokecolor = "63,63,63";
+
+		var focusalpha = "0.8";
+		var bluralpha = "0.6";
+
+		var alpha = bluralpha;
+		if (focus.target == self && focus.part == 5) {
+			alpha = focusalpha;
+		}
+		
+		ctx.fillStyle = "rgba(" + fillcolor + "," + alpha + ")";
+		ctx.fillRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+
+		ctx.strokeStyle = "rgba(" + strokecolor + "," + alpha + ")";
+		ctx.strokeRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+
+		var text = self.text;
+		ctx.textBaseline = "middle";
+		ctx.font = t.min((ia[2] - ia[0])/5, (ia[3] - ia[1])/2) + "px Arial";
+		ctx.fillStyle = "rgba(" + strokecolor + "," + alpha + ")";
+		var tx = (ia[0] + ia[2])/2 - ctx.measureText(text).width/2;
+		var ty = (ia[1] + ia[3])/2;
+		ctx.fillText(text, tx, ty);
+
+		self.drawCtrls(ctx, focus);
+	};
 }
 
 function Text(text, pos) {
 	Area.call(this, text, pos, false);
 	var self = this;
 	self.type = "text";
-	self.color = "#3F3F3F";
+	self.color = "#000000";
 	self.value = "Text";
-	self.font = "arialnb.ttf";
-	self.size = 64;
+	self.font = "arial";
+	self.fontname = "Arial";
+	self.fontsize = 64;
+
+	self.textscale = 0.8;
+
+	var optselem = template("_text_opts");
+	self.textinputs = {};
+	t.map(["font", "size", "color", "value"], function (i, name) {
+		self.textinputs[name] = findelem(optselem, "_text_" + name);
+	})
+	findelem(self.box, "_content").appendChild(optselem);
+
+	var ti = self.textinputs;
+	ti["font"].onchange = function () {
+		var sel = ti["font"];
+		var opt = sel.options[sel.selectedIndex];
+		self.font = opt.value;
+		self.fontname = opt.innerText;
+	};
+
+	ti["size"].value = self.fontsize;
+	ti["size"].onchange = function () {
+		var inp = ti["size"];
+		var size = parseInt(inp.value);
+		if (!isNaN(size) && size > 0) {
+			var p = self.pos;
+			var c = (p[1] + p[3])/2;
+			var d = Math.ceil(0.5*size/self.textscale);
+			p[1] = c - d;
+			p[3] = c + d;
+			self.fontsize = size;
+			self.clamp(self.outer.size[0], self.outer.size[1]);
+			self.redraw();
+		}
+	};
+	self.resize = function () {
+		self.fontsize = Math.floor((self.pos[3] - self.pos[1])*self.textscale);
+		ti["size"].value = self.fontsize;
+	};
+
+	ti["color"].value = self.color;
+	ti["color"].onchange = function () {
+		self.color = ti["color"].value;
+		self.redraw();
+	};
+
+	ti["value"].value = self.value;
+	ti["value"].onchange = function () {
+		self.value = ti["value"].value;
+		self.redraw();
+	};
+
+	self.draw = function(ctx, focus) {
+		var ia = self.pos;
+
+		var fillcolor = "191,191,191";
+		var strokecolor = "63,63,63";
+
+		var focusalpha = "0.8";
+		var bluralpha = "0.6";
+
+		var alpha = bluralpha;
+		if (focus.target == self && focus.part == 5) {
+			alpha = focusalpha;
+		}
+
+		ctx.strokeStyle = "rgba(" + fillcolor + "," + alpha + ")";
+		ctx.strokeRect(ia[0]+1, ia[1]+1, ia[2]-ia[0]-2, ia[3]-ia[1]-2);
+
+		ctx.strokeStyle = "rgba(" + strokecolor + "," + alpha + ")";
+		ctx.strokeRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+
+		var text = self.value;
+		ctx.textBaseline = "middle";
+		ctx.font = self.fontsize + "px " + self.fontname;
+		ctx.fillStyle = self.color;
+		var tx = (ia[0] + ia[2])/2 - ctx.measureText(text).width/2;
+		var ty = (ia[1] + ia[3])/2;
+		ctx.fillText(text, tx, ty);
+
+		self.drawCtrls(ctx, focus);
+	};
+
+	self.resize();
 }
