@@ -104,3 +104,7 @@ html {
 	background-color: #7777AA;
 	mix-blend-mode: multiply;
 }
+
+.text_opts tc {
+	padding: 2px;
+}

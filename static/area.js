@@ -1,13 +1,12 @@
-function Area(text, pos, fill) {
+function Area(caption, pos) {
 	var self = this;
 	self.type = "area";
 
-	self.text = text;
+	self.caption = caption;
 	self.pos = pos;
-	self.fill = fill;
 
 	self.box = template("_area");
-	findelem(self.box, "_text").innerText = text;
+	findelem(self.box, "_text").innerText = caption;
 
 	var poselem = template("_area_pos");
 	self.inputs = t.map(["_left", "_top", "_right", "_bottom"], function (i, cn) {
@@ -15,6 +14,13 @@ function Area(text, pos, fill) {
 	});
 
 	findelem(self.box, "_content").appendChild(poselem);
+
+	self.export = function () {
+		var c = {};
+		c["position"] = self.pos;
+		c["type"] = self.type;
+		return c;
+	};
 
 	self.move = function (m) {
 		var ia = self.pos;
@@ -185,10 +191,18 @@ function Area(text, pos, fill) {
 	}
 }
 
-function Image(text, pos) {
-	Area.call(this, text, pos, true);
+function Image(caption, pos) {
+	Area.call(this, caption, pos);
 	var self = this;
 	self.type = "image";
+	self.text = "Image";
+
+	var _export = self.export;
+	self.export = function () {
+		var c = _export();
+		c["imagetype"] = self.imgtype;
+		return c;
+	};
 
 	self.draw = function(ctx, focus) {
 		var ia = self.pos;
@@ -222,8 +236,8 @@ function Image(text, pos) {
 	};
 }
 
-function Text(text, pos) {
-	Area.call(this, text, pos, false);
+function Text(caption, pos) {
+	Area.call(this, caption, pos);
 	var self = this;
 	self.type = "text";
 	self.color = "#000000";
@@ -234,9 +248,19 @@ function Text(text, pos) {
 
 	self.textscale = 0.8;
 
+	var _export = self.export;
+	self.export = function () {
+		var c = _export();
+		c["texttype"] = self.texttype;
+		c["font"] = self.font;
+		c["size"] = self.fontsize;
+		c["color"] = t.rgb(self.color);
+		return c;
+	};
+
 	var optselem = template("_text_opts");
 	self.textinputs = {};
-	t.map(["font", "size", "color", "value"], function (i, name) {
+	t.map(["font", "size", "color"], function (i, name) {
 		self.textinputs[name] = findelem(optselem, "_text_" + name);
 	})
 	findelem(self.box, "_content").appendChild(optselem);
@@ -275,12 +299,6 @@ function Text(text, pos) {
 		self.redraw();
 	};
 
-	ti["value"].value = self.value;
-	ti["value"].onchange = function () {
-		self.value = ti["value"].value;
-		self.redraw();
-	};
-
 	self.draw = function(ctx, focus) {
 		var ia = self.pos;
 
@@ -313,4 +331,122 @@ function Text(text, pos) {
 	};
 
 	self.resize();
+}
+
+function ImageFixed(pos) {
+	Image.call(this, "Fixed image", pos);
+	var self = this;
+	self.imgtype = "fixed";
+}
+
+function ImageRandom(pos) {
+	Image.call(this, "Random image", pos);
+	var self = this;
+	self.imgtype = "random";
+}
+
+function TextFixed(pos) {
+	Text.call(this, "Fixed text", pos);
+	var self = this;
+
+	self.texttype = "fixed";
+
+	var _export = self.export;
+	self.export = function () {
+		var c = _export();
+		c["value"] = self.value;
+		return c;
+	};
+
+	var optselem = template("_text_fixed_opts");
+	findelem(self.box, "_content").appendChild(optselem);
+
+	var valelem = findelem(optselem, "_text_fixed_value");
+	self.textinputs["value"] = valelem;
+
+	valelem.value = self.value;
+	valelem.onchange = function () {
+		self.value = valelem.value;
+		self.redraw();
+	};
+}
+
+function TextRange(pos) {
+	Text.call(this, "Range text", pos);
+	var self = this;
+
+	self.texttype = "range";
+
+	self.minval = 999;
+	self.maxval = 1999;
+	self.stepval = 100;
+	self.prefix = "";
+	self.postfix = "";
+
+	var _export = self.export;
+	self.export = function () {
+		var c = _export();
+		c["min"] = self.minval;
+		c["max"] = self.maxval;
+		c["step"] = self.stepval;
+		c["prefix"] = self.prefix;
+		c["postfix"] = self.postfix;
+		return c;
+	};
+
+	var optselem = template("_text_range_opts");
+	findelem(self.box, "_content").appendChild(optselem);
+
+	t.map(["min", "step", "max", "prefix", "postfix"], function (i, name) {
+		self.textinputs[name] = findelem(optselem, "_text_range_" + name);
+	});
+	var ti = self.textinputs;
+
+	self.genvalue = function () {
+		self.value = self.prefix + self.minval + self.postfix;
+	};
+
+	ti["min"].value = self.minval;
+	ti["min"].onchange = function () {
+		var val = parseInt(ti["min"].value)
+		if (!isNaN(val)) {
+			self.minval = val;
+			self.genvalue();
+			self.redraw();
+		}
+	};
+	ti["max"].value = self.maxval;
+	ti["max"].onchange = function () {
+		var val = parseInt(ti["max"].value)
+		if (!isNaN(val)) {
+			self.maxval = val;
+			self.genvalue();
+			self.redraw();
+		}
+	};
+	ti["step"].value = self.stepval;
+	ti["step"].onchange = function () {
+		var val = parseInt(ti["step"].value)
+		if (!isNaN(val)) {
+			self.stepval = val;
+			self.genvalue();
+			self.redraw();
+		}
+	};
+
+	ti["prefix"].value = self.prefix;
+	ti["prefix"].onchange = function () {
+		self.prefix = ti["prefix"].value;
+		self.genvalue();
+		self.redraw();
+	};
+
+	ti["postfix"].value = self.postfix;
+	ti["postfix"].onchange = function () {
+		self.postfix = ti["postfix"].value;
+		self.genvalue();
+		self.redraw();
+	};
+
+	self.genvalue();
 }

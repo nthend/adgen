@@ -23,9 +23,25 @@ function main() {
 		var sel = t.elem("new_type");
 		var opt = sel.options[sel.selectedIndex].value;
 		if (opt == "image") { 
-			canvas.addArea(new Image("Image", [150, 100, 450, 400])); 
+			var imgsel = t.elem("new_image_type");
+			var imgopt = imgsel.options[imgsel.selectedIndex].value;
+			if (imgopt == "fixed") {
+				canvas.addArea(new ImageFixed([150, 100, 450, 400])); 
+			} else if (imgopt == "random") {
+				canvas.addArea(new ImageRandom([150, 100, 450, 400])); 
+			} else {
+				console.error("Unknown image type");
+			}
 		} else if (opt == "text") {
-			canvas.addArea(new Text("Text", [100, 250, 500, 350]));
+			var textsel = t.elem("new_text_type");
+			var textopt = textsel.options[textsel.selectedIndex].value;
+			if (textopt == "fixed") {
+				canvas.addArea(new TextFixed([100, 250, 500, 350]));
+			} else if (textopt == "range") {
+				canvas.addArea(new TextRange([100, 250, 500, 350]));
+			} else {
+				console.error("Unknown text type");
+			}
 		} else {
 			console.error("Unknown area type");
 		}

@@ -100,26 +100,7 @@ function Canvas(elem, size, color) {
 				background: t.rgb(self.color),
 			},
 			areas: t.map(self.areas, function (i, area) {
-				if (area.type == "image") {
-					return {
-						position: area.pos,
-						type: "image",
-						imagetype: "random",
-						location: "./input"
-					}
-				} else if (area.type == "text") {
-					return {
-						position: area.pos,
-						type: "text",
-						texttype: "fixed",
-						font: area.font,
-						color: t.rgb(area.color),
-						size: area.fontsize,
-						value: area.value,
-					}
-				} else {
-					return {}
-				}
+				return area.export();
 			})
 		};
 	};

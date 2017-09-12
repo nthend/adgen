@@ -21,11 +21,10 @@ def generate(config, filename):
 	)
 	for area in config["areas"]:
 		if area["type"] == "image":
-			if area["imagetype"] == "fixed":
-				pass
-			elif area["imagetype"] == "random":
-				imglist = listimages(area["location"])
-				randimg = Image.open(area["location"] + "/" + imglist[randrange(len(imglist))])
+			if area["imagetype"] == "random":
+				location = "input"
+				imglist = listimages(location)
+				randimg = Image.open(location + "/" + imglist[randrange(len(imglist))])
 				
 				box = area["position"]
 				boxsize = [box[2] - box[0], box[3] - box[1]]
@@ -50,17 +49,24 @@ def generate(config, filename):
 			else:
 				print("Unknown image type: " + area["imagetype"])
 		elif area["type"] == "text":
+			value = None
 			if area["texttype"] == "fixed":
+				value = area["value"]
+			elif area["texttype"] == "range":
+				number = area["min"] + randrange((area["max"] - area["min"])/area["step"])*area["step"]
+				value = area["prefix"] + str(number) + area["postfix"]
+			else:
+				print("Unknown text type: " + area["textype"])
+
+			if value is not None:
 				font = ImageFont.truetype("fonts/" + area["font"] + ".ttf", area["size"])
 				draw = ImageDraw.Draw(img)
 				box = area["position"]
 				pos = [(box[0] + box[2])//2, (box[1] + box[3])//2]
-				tw, th = draw.textsize(area["value"], font=font)
+				tw, th = draw.textsize(value, font=font)
 				pos[0] -= tw//2
 				pos[1] -= th//2
-				draw.text(tuple(pos), area["value"], tuple(area["color"]), font=font)
-			else:
-				print("Unknown text type: " + area["textype"])
+				draw.text(tuple(pos), value, tuple(area["color"]), font=font)
 		else:
 			print("Unknown area type: " + area["type"])
 	img.save(filename, "JPEG")
