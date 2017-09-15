@@ -4,7 +4,7 @@ t.elem = function (id) {
 	return document.getElementById(id);
 }
 
-t.ajax = function ajax(path, data, ok, err) {
+t.ajax = function ajax(path, data, ok, err, restype) {
 	let req = new XMLHttpRequest();
 	if (!req) {
 		err(null);
@@ -13,7 +13,7 @@ t.ajax = function ajax(path, data, ok, err) {
 	req.onreadystatechange = function() {
 		if (this.readyState == XMLHttpRequest.DONE) {
 			if (this.status == 200) {
-				ok && ok(this.responseText);
+				ok && ok(this);
 			} else {
 				err && err(this.status);
 			}

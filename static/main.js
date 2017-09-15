@@ -68,6 +68,17 @@ function main() {
 		if (!isNaN(count)) {
 			t.ajax("/generate", JSON.stringify({
 				count: count,
+				type: "random",
+				config: canvas.export()
+			}));
+		}
+	}
+	t.elem("generate_unique").onclick = function () {
+		var count = parseInt(t.elem("gen_number").value);
+		if (!isNaN(count)) {
+			t.ajax("/generate", JSON.stringify({
+				count: count,
+				type: "unique",
 				config: canvas.export()
 			}));
 		}

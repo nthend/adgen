@@ -191,11 +191,13 @@ function Area(caption, pos) {
 	}
 }
 
-function Image(caption, pos) {
+function _Image(caption, pos) {
 	Area.call(this, caption, pos);
 	var self = this;
 	self.type = "image";
 	self.text = "Image";
+
+	self.imginputs = {};
 
 	var _export = self.export;
 	self.export = function () {
@@ -218,19 +220,25 @@ function Image(caption, pos) {
 			alpha = focusalpha;
 		}
 		
-		ctx.fillStyle = "rgba(" + fillcolor + "," + alpha + ")";
-		ctx.fillRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+		if (self.image) {
+			ctx.globalAlpha = alpha;
+			ctx.drawImage(self.image, ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+			ctx.globalAlpha = 1.0;
+		} else {
+			ctx.fillStyle = "rgba(" + fillcolor + "," + alpha + ")";
+			ctx.fillRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
+
+			var text = self.text;
+			ctx.textBaseline = "middle";
+			ctx.font = t.min((ia[2] - ia[0])/5, (ia[3] - ia[1])/2) + "px Arial";
+			ctx.fillStyle = "rgba(" + strokecolor + "," + alpha + ")";
+			var tx = (ia[0] + ia[2])/2 - ctx.measureText(text).width/2;
+			var ty = (ia[1] + ia[3])/2;
+			ctx.fillText(text, tx, ty);
+		}
 
 		ctx.strokeStyle = "rgba(" + strokecolor + "," + alpha + ")";
 		ctx.strokeRect(ia[0], ia[1], ia[2]-ia[0], ia[3]-ia[1]);
-
-		var text = self.text;
-		ctx.textBaseline = "middle";
-		ctx.font = t.min((ia[2] - ia[0])/5, (ia[3] - ia[1])/2) + "px Arial";
-		ctx.fillStyle = "rgba(" + strokecolor + "," + alpha + ")";
-		var tx = (ia[0] + ia[2])/2 - ctx.measureText(text).width/2;
-		var ty = (ia[1] + ia[3])/2;
-		ctx.fillText(text, tx, ty);
 
 		self.drawCtrls(ctx, focus);
 	};
@@ -334,15 +342,65 @@ function Text(caption, pos) {
 }
 
 function ImageFixed(pos) {
-	Image.call(this, "Fixed image", pos);
+	_Image.call(this, "Fixed image", pos);
 	var self = this;
 	self.imgtype = "fixed";
+
+	self.location = "input/image.jpg"
+
+	var _export = self.export;
+	self.export = function () {
+		var c = _export();
+		c["location"] = self.location;
+		return c;
+	};
+
+	var optselem = template("_image_fixed_opts");
+	findelem(self.box, "_content").appendChild(optselem);
+
+	var locelem = findelem(optselem, "_image_fixed_location");
+	self.imginputs["location"] = locelem;
+	locelem.value = self.location;
+	locelem.onchange = function () {
+		self.location = locelem.value;
+	};
+
+	var loadelem = findelem(optselem, "_image_fixed_load");
+	self.imginputs["load"] = loadelem;
+	loadelem.onclick = function () {
+		self.image = new Image();
+		self.image.addEventListener("load", function () {
+			console.log("[ ok ] image loaded");
+			self.redraw();
+		}, false);
+		self.image.src = "/loadfile?path=" + self.location;
+	};
 }
 
 function ImageRandom(pos) {
-	Image.call(this, "Random image", pos);
+	_Image.call(this, "Random image", pos);
 	var self = this;
 	self.imgtype = "random";
+
+	self.directory = "input"
+
+	var _export = self.export;
+	self.export = function () {
+		var c = _export();
+		c["directory"] = self.directory;
+		return c;
+	};
+
+	var optselem = template("_image_random_opts");
+	findelem(self.box, "_content").appendChild(optselem);
+
+	var elem = findelem(optselem, "_image_random_directory");
+	self.imginputs["directory"] = elem;
+
+	elem.value = self.directory;
+	elem.onchange = function () {
+		self.directory = elem.value;
+	};
 }
 
 function TextFixed(pos) {

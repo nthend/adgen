@@ -7,18 +7,34 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
-from generator import generate_multiple
+from generator import Generator
 
 
 class RequestHandler(BaseHTTPRequestHandler):
 
 	def dynamic(self):
-		if self.path.strip("/") == "generate":
+		sect = self.path.split("?")
+		req = sect[0].strip("/")
+		opts = {}
+		if len(sect) > 1:
+			for pair in sect[1].split("&"):
+				key, value = tuple(pair.split("="))
+				opts[key] = value
+
+		if req == "generate":
 			size = int(self.headers["Content-Length"])
 			data = json.loads(self.rfile.read(size).decode("utf-8"))
 			print(data)
-			generate_multiple(data["config"], data["count"], "output/out%02d.jpg")
+			gen = Generator(data["type"])
+			gen.generate_multiple(data["config"], data["count"], "output/out%06d.jpg")
 			return (200, "text/plain", b"200 OK")
+		elif req == "loadfile":
+			path = opts["path"]
+			ctype = mimetypes.guess_type(path)[0]
+			file = open(path, "rb")
+			body = file.read()
+			file.close()
+			return (200, ctype, body)
 		return None
 
 	def static(self):
