@@ -1,4 +1,5 @@
 import os
+import json
 from random import randrange
 from PIL import Image, ImageFont, ImageDraw
 
@@ -23,11 +24,18 @@ class Generator:
 			tuple(config["canvas"]["dimensions"]), 
 			color=tuple(config["canvas"]["background"])
 		)
+		info = None
 		for area in config["areas"]:
 			if area["type"] == "image":
 				imgpath = None
 				if area["imagetype"] == "random":
 					directory = area["directory"]
+
+					infofn = directory + "/info.json"
+					infofile = open(infofn, "r")
+					info = json.loads(infofile.read())
+					infofile.close()
+
 					imglist = self.listimages(directory)
 					if self.gentype == "unique":
 						if directory not in self.loccount.keys():
@@ -44,6 +52,10 @@ class Generator:
 					print("Unknown image type: " + area["imagetype"])
 
 				if imgpath is not None:
+					if info is not None:
+						imgid = "".join(imgpath.split("/")[-1].split(".")[:-1])
+						info = info.get(imgid, None)
+
 					srcimg = Image.open(imgpath)
 					box = area["position"]
 					boxsize = [box[2] - box[0], box[3] - box[1]]
@@ -69,12 +81,19 @@ class Generator:
 			elif area["type"] == "text":
 				value = None
 				if area["texttype"] == "fixed":
-					value = area["value"]
+					if info is not None:
+						value = str(info["price"])
+					else:
+						value = area["value"]
 				elif area["texttype"] == "range":
-					number = area["min"] + randrange((area["max"] - area["min"])/area["step"])*area["step"]
-					value = area["prefix"] + str(number) + area["postfix"]
+					if info is not None:
+						value = area["prefix"] + str(info["price"]) + area["postfix"]
+					else:
+						number = area["min"] + randrange((area["max"] - area["min"])/area["step"])*area["step"]
+						value = area["prefix"] + str(number) + area["postfix"]
 				else:
 					print("Unknown text type: " + area["textype"])
+				info = None
 
 				if value is not None:
 					font = ImageFont.truetype("fonts/" + area["font"] + ".ttf", area["size"])
