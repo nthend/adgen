@@ -3,3 +3,6 @@ input
 output
 fonts
 *.zip
+adgenenv
+adgen.ini
+

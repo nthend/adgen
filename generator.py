@@ -19,7 +19,7 @@ class Generator:
 
 	def generate(self, config, filename):
 		img = Image.new(
-			"RGBA", 
+			"RGB", 
 			tuple(config["canvas"]["dimensions"]), 
 			color=tuple(config["canvas"]["background"])
 		)
@@ -27,7 +27,7 @@ class Generator:
 			if area["type"] == "image":
 				imgpath = None
 				if area["imagetype"] == "random":
-					directory = area["directory"]
+					directory = "./output/" + area["directory"]
 					imglist = self.listimages(directory)
 					if self.gentype == "unique":
 						if directory not in self.loccount.keys():
@@ -39,7 +39,7 @@ class Generator:
 					else:
 						imgpath = directory + "/" + imglist[randrange(len(imglist))];
 				elif area["imagetype"] == "fixed":
-					imgpath = area["location"]
+					imgpath = "./output/" + area["location"]
 				else:
 					print("Unknown image type: " + area["imagetype"])
 

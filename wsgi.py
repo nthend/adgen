@@ -10,23 +10,22 @@ from generator import Generator
 
 class App:
 	def dynamic(self, environ):
-		sect = environ["PATH_INFO"].split("?")
-		req = sect[0].strip("/")
+		req = environ["PATH_INFO"].strip("/")
 		opts = {}
-		if len(sect) > 1:
-			for pair in sect[1].split("&"):
-				key, value = tuple(pair.split("="))
-				opts[key] = value
+		for pair in environ["QUERY_STRING"].split("&"):
+			res = tuple(pair.split("="))
+			if len(res) > 1:
+				opts[res[0]] = res[1]
 
 		if req == "generate":
 			size = int(environ.get('CONTENT_LENGTH', 0))
 			data = json.loads(environ['wsgi.input'].read(size).decode("utf-8"))
 			print(data)
 			gen = Generator(data["type"])
-			gen.generate_multiple(data["config"], data["count"], "output/out%06d.jpg")
+			gen.generate_multiple(data["config"], data["count"], "output/out/%06d.jpg")
 			return ("200 OK", "text/plain", b"200 OK")
 		elif req == "loadfile":
-			path = opts["path"]
+			path = "./output/" + opts["path"]
 			ctype = mimetypes.guess_type(path)[0]
 			file = open(path, "rb")
 			body = file.read()
