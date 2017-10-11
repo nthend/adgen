@@ -27,7 +27,7 @@ class Generator:
 			if area["type"] == "image":
 				imgpath = None
 				if area["imagetype"] == "random":
-					directory = "./output/" + area["directory"]
+					directory = "./" + area["directory"]
 					imglist = self.listimages(directory)
 					if self.gentype == "unique":
 						if directory not in self.loccount.keys():
@@ -39,7 +39,7 @@ class Generator:
 					else:
 						imgpath = directory + "/" + imglist[randrange(len(imglist))];
 				elif area["imagetype"] == "fixed":
-					imgpath = "./output/" + area["location"]
+					imgpath = "./" + area["location"]
 				else:
 					print("Unknown image type: " + area["imagetype"])
 
@@ -71,7 +71,7 @@ class Generator:
 				if area["texttype"] == "fixed":
 					value = area["value"]
 				elif area["texttype"] == "range":
-					number = area["min"] + randrange((area["max"] - area["min"])/area["step"])*area["step"]
+					number = area["min"] + randrange((area["max"] - area["min"])//area["step"] + 1)*area["step"]
 					value = area["prefix"] + str(number) + area["postfix"]
 				else:
 					print("Unknown text type: " + area["textype"])

@@ -22,10 +22,10 @@ class App:
 			data = json.loads(environ['wsgi.input'].read(size).decode("utf-8"))
 			print(data)
 			gen = Generator(data["type"])
-			gen.generate_multiple(data["config"], data["count"], "output/out/%06d.jpg")
+			gen.generate_multiple(data["config"], data["count"], "output/%06d.jpg")
 			return ("200 OK", "text/plain", b"200 OK")
 		elif req == "loadfile":
-			path = "./output/" + opts["path"]
+			path = "./" + opts["path"]
 			ctype = mimetypes.guess_type(path)[0]
 			file = open(path, "rb")
 			body = file.read()

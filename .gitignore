@@ -5,4 +5,5 @@ fonts
 *.zip
 adgenenv
 adgen.ini
-
+*.bat
+WinPython*
